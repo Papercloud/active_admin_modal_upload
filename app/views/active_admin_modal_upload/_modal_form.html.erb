@@ -1,0 +1,39 @@
+
+
+<div id="winery-photographs-uploader", style="display:none; width: 30%; margin-top: -100px;">
+  <%= s3_uploader_form id: "s3-uploader" do %>
+    <%= file_field_tag :file, multiple: true %>
+  <% end %>
+</div>
+
+<script id="template-upload" type="text/x-tmpl">
+<div id="file-{%=o.unique_id%}" class="upload">
+  {%=o.name%}
+  <div class="progress progress-striped active" role="progressbar"><div class="bar" class="progress-bar bar progress-bar-success" style="width: 0%;"></div></div>
+</div>
+</script>
+
+<script type="text/javascript">
+  $(function () {
+    $('#s3-uploader').S3Uploader({
+    }).on("s3_upload_complete", function(e, content) {
+      insertRemoteInput(content);
+    }).bind("s3_uploads_complete", function(e, data) {
+      var processingMessage = $('<p>Uploads completed.</p>')
+      processingMessage.insertAfter($('#file'))
+    }).on("ajax:success", function(e, data) {
+      insertUploadInputsForPhotographs(JSON.parse(data));
+    }).on("ajax:error", function(e, data) {
+      alert("Something went wrong");
+    }).bind("s3_upload_failed", function(e, content) {
+      return alert("" + content.filename + " failed to upload : " + content.error_thrown);
+    });
+  });
+
+  var insertRemoteInput = function(content) {
+    console.log(content)
+    input = $("<input type='hidden' name='winery[photographs_attributes]["+ $.now() +"][temporary_image_url]' value='" + content.url +"'/>");
+    input.insertAfter($('#photo-box'));
+  }
+
+</script>
