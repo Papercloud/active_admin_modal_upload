@@ -1,0 +1,8 @@
+Description:
+    Inserts the necessary SCSS & JS into ActiveAdmin to allow for modal-uploads
+
+Example:
+    rails generate active_admin_modal_upload
+
+    This will create:
+        what/will/it/create
