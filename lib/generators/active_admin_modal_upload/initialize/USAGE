@@ -2,7 +2,8 @@ Description:
     Inserts the necessary SCSS & JS into ActiveAdmin to allow for modal-uploads
 
 Example:
-    rails generate active_admin_modal_upload
+    rails generate active_admin_modal_upload:initialize
 
-    This will create:
-        what/will/it/create
+    This will append:
+        active_admin.js.cofee
+        active_admin.css.scss

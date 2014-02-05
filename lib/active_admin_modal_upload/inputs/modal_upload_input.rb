@@ -12,7 +12,7 @@ class ModalUploadInput
   def js_to_append_modal
    "<script type='text/javascript'>
       $(document).ready(function() {
-        $('form').append('" + modal_window + "');
+        $('#main_content').append('" + modal_window + "');
       });
     </script>
     "
@@ -26,7 +26,7 @@ class ModalUploadInput
     resource = options[:resource].class.name.downcase
     association = options[:association]
     modal_window_id = "#{resource}-#{association}-uploader-window"
-    '<div id="' + modal_window_id + '", style="display: none; width: 30%; margin-top: -100px;">' +
+    '<div id="' + modal_window_id + '" class="modal-window-visible" style="display: none;">' +
     upload_form +
     '</div>'
   end
@@ -38,14 +38,20 @@ class ModalUploadInput
   end
 
   def file_previews
-    options[:resource].send(options[:association].to_sym).each_with_index.map { |file, index|
+    options[:resource].send(options[:association].to_sym).order("image ASC").each_with_index.map { |file, index|
       input_name = "#{options[:resource].class.name.downcase}[#{options[:association].underscore}_attributes][#{index}]"
+
+      image_preview = file.image.present? ? image_tag(file.image_url(options[:preview_image_size] ||= :thumb)) : image_tag(file.temporary_image_url, width: "150px", :style => "opacity:0.3; filter:alpha(opacity=30);") + "<br/><em>*This image is still being processed</em>".html_safe
+
+      "<div class='existing-upload'>" +
       "<div class='file-preview'>" +
-        image_tag(file.image_url(options[:preview_image_size] ||= :thumb)) +
+        image_preview +
       "</div>" +
       "<div class='remove-file'>" +
         check_box_tag("#{input_name}[_destroy]") +
+        "<p>Remove File</p>" +
         hidden_field_tag("#{input_name}[id]", file.id) +
+      "</div>" +
       "</div>"
     }
   end
@@ -65,10 +71,15 @@ class ModalUploadInput
       $(function() {
         $('\##{options[:resource].class.name.downcase}-#{options[:association].underscore}-uploader').S3Uploader({
         }).on('s3_upload_complete', function(e, content) {
+
+
+          var preview = $('<div class=\"existing-upload\"><div class=\"file-preview\"><img src=\"' + content['url'] + '\" style=\"width: 150px; opacity:0.3; filter:alpha(opacity=30);\"><br/><em>*This image is still being processed</em></div><div class=\"remove-file\"></div></div>');
+          var lastPreview = $('.existing-upload').last();
           insertRemoteInput(content);
+          preview.insertAfter(lastPreview);
         }).bind('s3_uploads_complete', function(e, data) {
-          var processingMessage = $('<h3>Uploads completed.</h3>')
-          processingMessage.insertAfter($('#file'))
+          var processingMessage = $('<h3 style=\"text-align: center; margin-top=20px;\">Uploads completed.</h3>')
+          processingMessage.insertAfter($('#file'));
         }).on('ajax:success', function(e, data) {
           insertUploadInputsForPhotographs(JSON.parse(data));
         }).on('ajax:error', function(e, data) {
@@ -79,12 +90,15 @@ class ModalUploadInput
       });
 
       var insertRemoteInput = function(content) {
-        console.log(content)
         input = $('<input type=\"hidden\" name=\"#{options[:resource].class.name.downcase}[#{options[:association].underscore}_attributes][' + $.now() + '][temporary_image_url]\" value=\"' + content.url + '\" />');
         input.insertAfter($('\##{options[:association].underscore}_uploader'));
       }
     </script>
     "
+  end
+
+  def placeholder
+    "<div class='existing-upload'></div>"
   end
 
 
@@ -93,6 +107,7 @@ class ModalUploadInput
       label_html <<
       uploader_button <<
       file_previews.join(" ").html_safe <<
+      placeholder.html_safe <<
       upload_template.html_safe <<
       js_to_append_modal.html_safe <<
       upload_js.html_safe

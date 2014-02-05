@@ -12,6 +12,7 @@ module ActiveAdminModalUpload
       append_file "app/assets/stylesheets/active_admin.css.scss", "@import 'jquery.ui.all';\n"
       append_file "app/assets/stylesheets/active_admin.css.scss", "@import 'jquery.modal';\n"
       append_file "app/assets/stylesheets/active_admin.css.scss", "@import 's3_direct_upload_progress_bars';\n"
+      append_file "app/assets/stylesheets/active_admin.css.scss", "@import 'active_admin_modal_upload';\n"
     end
   end
 end

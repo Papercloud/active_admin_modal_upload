@@ -1,0 +1,34 @@
+
+.existing-upload {
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  position: relative;
+  clear: both;
+
+  .file-preview {
+    margin: 10px;
+    // width: 50%;
+    float: left;
+    // display: inline-block;
+    // clear: both;
+    position: relative;
+  }
+
+  .remove-file {
+    margin-top: 10px;
+    display: inline-block;
+    float: left;
+  }
+
+
+}
+
+.modal-window-visible {
+  height: 50%;
+  width: 30%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+}
