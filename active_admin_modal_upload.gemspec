@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "s3_direct_upload"
   s.add_dependency "jquery-ui-rails"
   s.add_dependency "jquery-modal-rails"
+  s.add_dependency "sidekiq"
 
   s.add_development_dependency "sqlite3"
 end
