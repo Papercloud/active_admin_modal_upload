@@ -28,6 +28,7 @@ class ModalUploadInput
     modal_window_id = "#{resource}-#{association}-uploader-window"
     '<div id="' + modal_window_id + '" class="modal-window-visible" style="display: none;">' +
     upload_form +
+    close_modal_button +
     '</div>'
   end
 
@@ -35,6 +36,10 @@ class ModalUploadInput
     s3_uploader_form id: "#{options[:resource].class.name.downcase}-#{options[:association].underscore}-uploader" do
       file_field_tag :file, multiple: true
     end
+  end
+
+  def close_modal_button
+    link_to 'Close Window', "", :rel => "modal:close", class: "close-this-modal"
   end
 
   def file_previews
@@ -78,7 +83,7 @@ class ModalUploadInput
           insertRemoteInput(content);
           preview.insertAfter(lastPreview);
         }).bind('s3_uploads_complete', function(e, data) {
-          var processingMessage = $('<h3 style=\"text-align: center; margin-top=20px;\">Uploads completed.</h3>')
+          var processingMessage = $('<div id=\"all-uploads-complete\"><h3>Uploads completed.</h3></div>')
           processingMessage.insertAfter($('#file'));
         }).on('ajax:success', function(e, data) {
           insertUploadInputsForPhotographs(JSON.parse(data));

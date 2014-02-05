@@ -88,6 +88,24 @@ S3DirectUpload.config do |c|
 end
 ``````````````
 
+Make sure your AWS S3 CORS settings for your bucket look something like this:
+
+``````````````````````
+<CORSConfiguration>
+    <CORSRule>
+        <AllowedOrigin>http://0.0.0.0:3000</AllowedOrigin>
+        <AllowedMethod>GET</AllowedMethod>
+        <AllowedMethod>POST</AllowedMethod>
+        <AllowedMethod>PUT</AllowedMethod>
+        <MaxAgeSeconds>3000</MaxAgeSeconds>
+        <AllowedHeader>*</AllowedHeader>
+    </CORSRule>
+</CORSConfiguration>
+``````````````````````````
+
+In production the AllowedOrigin key should be your domain.
+
+
 ### Allow the params
 
 In `app/admin/gallery.rb` allow the following:
